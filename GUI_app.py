@@ -5,6 +5,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import os
 import numpy as np
+from st_files_connection import FilesConnection
 
 planting_date_min = dt.datetime(2024,4,5)
 planting_date_max = dt.datetime(2024,5,5)
@@ -19,8 +20,9 @@ region_dict.update([('AbashiriW_N', list(range(1,4))),
                     ('AbashiriS', list(range(20,34))), 
                     ('Abashiri', list(range(34,42)))])
 
+conn = st.connection('gcs',type=FilesConnection)
 
-scenario_date_list = sorted(os.listdir('storage/Abashiri'))
+scenario_date_list = sorted(os.listdir('barley_storage/Abashiri'))
 scenario_len = len(scenario_date_list) -1
 
 st.sidebar.title('収穫時期予測アプリ')
@@ -31,7 +33,7 @@ scenario_date_bar = st.sidebar.selectbox('シナリオ作成日', scenario_date_
 input_button = st.sidebar.button('入力')
 
 def make_boxplot(file_name):
-    df_boxplot = pd.read_csv(file_name)
+    df_boxplot = conn.read(file_name,input_format='csv')
     df_boxplot['Scenario_Date'] = pd.to_datetime(scenario_date_bar).strftime('%Y/%m/%d')
     boxplot = px.box(data_frame=df_boxplot, x='Scenario_Date', y='MDAT_datetime', title='収穫日予測結果')
     boxplot.update_layout(xaxis_title='シナリオ作成日', yaxis_title='収穫日') 
@@ -43,7 +45,7 @@ def make_boxplot(file_name):
 if input_button:
     #region_en = region_list_en[region_list_jp.index(region_bar)]
     region_en = [k for k, v in region_dict.items() if region_bar in v][0]
-    result_file = 'storage/{0}/{2}/{0}_{1}.csv'.format(region_en, planting_date_calendar, scenario_date_bar)
+    result_file = 'barley_storage/{0}/{2}/{0}_{1}.csv'.format(region_en, planting_date_calendar, scenario_date_bar)
     fig,quantile_25,quantile_75,mean_date = make_boxplot(result_file)
     st.plotly_chart(fig)
     st.write('収穫日は{}から{}の予測です。'.format(quantile_25,quantile_75))
