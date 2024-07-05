@@ -20,9 +20,9 @@ region_dict.update([('AbashiriW_N', list(range(1,4))),
                     ('AbashiriS', list(range(20,34))), 
                     ('Abashiri', list(range(34,42)))])
 
-conn = st.connection('gcs',type=FilesConnection)
+conn = st.connection('gcs', type=FilesConnection)
 
-scenario_date_list = sorted(os.listdir('barley_storage/Abashiri'))
+scenario_date_list = pd.read_csv('date_list.csv',header=None)
 scenario_len = len(scenario_date_list) -1
 
 st.sidebar.title('収穫時期予測アプリ')
@@ -33,7 +33,7 @@ scenario_date_bar = st.sidebar.selectbox('シナリオ作成日', scenario_date_
 input_button = st.sidebar.button('入力')
 
 def make_boxplot(file_name):
-    df_boxplot = conn.read(file_name,input_format='csv')
+    df_boxplot = conn.read(file_name,input_format='csv',ttl=600)
     df_boxplot['Scenario_Date'] = pd.to_datetime(scenario_date_bar).strftime('%Y/%m/%d')
     boxplot = px.box(data_frame=df_boxplot, x='Scenario_Date', y='MDAT_datetime', title='収穫日予測結果')
     boxplot.update_layout(xaxis_title='シナリオ作成日', yaxis_title='収穫日') 

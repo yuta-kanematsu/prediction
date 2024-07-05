@@ -9,6 +9,8 @@ readme = "README.md"
 python = "^3.12"
 streamlit = "^1.35.0"
 plotly = "^5.22.0"
+st-files-connection = "^0.1.0"
+gcsfs = "^2024.6.1"
 
 
 [build-system]
