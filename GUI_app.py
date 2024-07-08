@@ -25,7 +25,7 @@ conn = st.connection('gcs', type=FilesConnection)
 scenario_date_list = pd.read_csv('date_list.csv',header=None)
 scenario_len = len(scenario_date_list) -1
 
-st.sidebar.title('収穫時期予測アプリ')
+st.title('収穫時期予測アプリ')
 
 planting_date_calendar = st.date_input('播種日', planting_date_min, min_value=planting_date_min, max_value=planting_date_max)
 region_bar = st.selectbox('営農集団', region_group_list)
