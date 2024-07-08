@@ -22,14 +22,15 @@ region_dict.update([('AbashiriW_N', list(range(1,4))),
 
 conn = st.connection('gcs', type=FilesConnection)
 
-scenario_date_list = pd.read_csv('date_list.csv',header=None)
+scenario_date_list = pd.read_csv('date_list.csv')
+scenario_date_list.Scenairo_date = pd.to_datetime(scenario_date_list.Scenario_date).dt.strftime('%Y-%m-%d')
 scenario_len = len(scenario_date_list) -1
 
 st.title('収穫時期予測アプリ')
 
 planting_date_calendar = st.date_input('播種日', planting_date_min, min_value=planting_date_min, max_value=planting_date_max)
 region_bar = st.selectbox('営農集団', region_group_list)
-scenario_date_bar = st.selectbox('シナリオ作成日', scenario_date_list, index=scenario_len)
+scenario_date_bar = st.selectbox('シナリオ作成日', scenario_date_list.Scenairo_date, index=scenario_len)
 input_button = st.button('入力')
 
 def make_boxplot(file_name):
